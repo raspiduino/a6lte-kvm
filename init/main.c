@@ -97,6 +97,10 @@
 #include <linux/sec_ext.h>
 #endif
 
+#ifdef CONFIG_KVM
+#include <linux/arm.h> // ARM with KVM preinit code
+#endif
+
 static int kernel_init(void *);
 
 extern void init_IRQ(void);
@@ -649,7 +653,7 @@ asmlinkage __visible void __init start_kernel(void)
 	mm_init();
 
 	#ifdef CONFIG_KVM
-	void preinit_hyp_mode(void);
+	//void preinit_hyp_mode(void);
 	preinit_hyp_mode();
 	#endif
 
