@@ -64,7 +64,7 @@ static void kvm_timer_inject_irq(struct kvm_vcpu *vcpu)
 	int ret;
 	struct arch_timer_cpu *timer = &vcpu->arch.timer_cpu;
 
-	timer->cntv_ctl |= ARCH_TIMER_CTRL_IT_MASK;
+	//timer->cntv_ctl |= ARCH_TIMER_CTRL_IT_MASK;
 	ret = kvm_vgic_inject_irq(vcpu->kvm, vcpu->vcpu_id,
 				  timer->irq->irq,
 				  timer->irq->level);
@@ -149,8 +149,11 @@ void kvm_timer_sync_hwstate(struct kvm_vcpu *vcpu)
 		 * looking. Inject the interrupt and carry on.
 		 */
 		kvm_timer_inject_irq(vcpu);
+		disable_percpu_irq(host_vtimer_irq);
 		return;
 	}
+	else
+		enable_percpu_irq(host_vtimer_irq, 0);
 
 	ns = cyclecounter_cyc2ns(timecounter->cc, cval - now);
 	timer_arm(timer, ns);

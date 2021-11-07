@@ -40,8 +40,9 @@ phys_addr_t __hyp_get_vectors(void);
 /* Reports the availability of HYP mode */
 static inline bool is_hyp_mode_available(void)
 {
-	return (__boot_cpu_mode[0] == BOOT_CPU_MODE_EL2 &&
-		__boot_cpu_mode[1] == BOOT_CPU_MODE_EL2);
+	//return (__boot_cpu_mode[0] == BOOT_CPU_MODE_EL2 &&
+	//	__boot_cpu_mode[1] == BOOT_CPU_MODE_EL2);
+	return 1;
 }
 
 /* Check if the bootloader has booted CPUs in different modes */

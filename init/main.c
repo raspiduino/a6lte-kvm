@@ -622,6 +622,9 @@ asmlinkage __visible void __init start_kernel(void)
 			   set_init_arg);
 
 #ifdef CONFIG_TIMA_RKP
+#ifdef CONFIG_KVM
+#error "RKP and KVM cannot coexist!"
+#endif
 #ifdef CONFIG_KNOX_KAP
 	if (boot_mode_security)
 		vmm_init();
@@ -644,6 +647,11 @@ asmlinkage __visible void __init start_kernel(void)
 	sort_main_extable();
 	trap_init();
 	mm_init();
+
+	#ifdef CONFIG_KVM
+	void preinit_hyp_mode(void);
+	preinit_hyp_mode();
+	#endif
 
 	/*
 	 * Set up the scheduler prior starting any interrupts (such as the

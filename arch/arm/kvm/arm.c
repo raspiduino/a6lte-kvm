@@ -806,6 +806,9 @@ long kvm_arch_vm_ioctl(struct file *filp,
 	}
 }
 
++static unsigned long hyp_stack_base;
++void vmm_init_kvm(phys_addr_t code, phys_addr_t boot_pgd_ptr, phys_addr_t pgd_ptr, unsigned long hyp_stack_ptr, unsigned long vector_ptr);
+
 static void cpu_init_hyp_mode(void *dummy)
 {
 	phys_addr_t boot_pgd_ptr;
@@ -815,15 +818,16 @@ static void cpu_init_hyp_mode(void *dummy)
 	unsigned long vector_ptr;
 
 	/* Switch from the HYP stub to our own HYP init vector */
-	__hyp_set_vectors(kvm_get_idmap_vector());
+	//__hyp_set_vectors(kvm_get_idmap_vector());
 
 	boot_pgd_ptr = kvm_mmu_get_boot_httbr();
 	pgd_ptr = kvm_mmu_get_httbr();
-	stack_page = __this_cpu_read(kvm_arm_hyp_stack_page);
+	//stack_page = __this_cpu_read(kvm_arm_hyp_stack_page);
 	hyp_stack_ptr = stack_page + PAGE_SIZE;
 	vector_ptr = (unsigned long)__kvm_hyp_vector;
 
-	__cpu_init_hyp_mode(boot_pgd_ptr, pgd_ptr, hyp_stack_ptr, vector_ptr);
+	//__cpu_init_hyp_mode(boot_pgd_ptr, pgd_ptr, hyp_stack_ptr, vector_ptr);
+	vmm_init_kvm(kvm_get_idmap_vector(), boot_pgd_ptr, pgd_ptr, hyp_stack_ptr, vector_ptr);
 }
 
 static int hyp_init_cpu_notify(struct notifier_block *self,
@@ -872,13 +876,13 @@ static inline void hyp_cpu_pm_init(void)
 }
 #endif
 
-/**
- * Inits Hyp-mode on all online CPUs
- */
-static int init_hyp_mode(void)
+static int preinit_status = -EINVAL;
+void preinit_hyp_mode(void)
 {
-	int cpu;
-	int err = 0;
+	//int cpu;
+	//int err = 0;
+
+	int err;
 
 	/*
 	 * Allocate Hyp PGD and setup Hyp identity mapping
@@ -888,14 +892,67 @@ static int init_hyp_mode(void)
 		goto out_err;
 
 	/*
+	 * Allocate stack pages for Hypervisor-mode
+	 */
+	//hyp_default_vectors = __hyp_get_vectors();
+	hyp_stack_base = __get_free_pages(GFP_KERNEL, 3);
+	if (!hyp_stack_base) {
+		err = -ENOMEM;
+		goto out_err;
+	}
+
+	/*
+	 * Map the Hyp-code called directly from the host
+	 */
+	
+	err = create_hyp_mappings(__kvm_hyp_code_start, __kvm_hyp_code_end);
+	if (err) {
+		kvm_err("Cannot map world-switch code\n");
+		goto out_free_mappings;
+	}
+
+	/*
+	 * Map the Hyp stack
+	 */
+	err = create_hyp_mappings((void*)hyp_stack_base, (void*)(hyp_stack_base+8*PAGE_SIZE));
+	if (err) {
+		kvm_err("Cannot map Hyp stack\n");
+		goto out_free_mappings;
+	}
+
+	cpu_init_hyp_mode(NULL);
+	preinit_status = 0;
+	kvm_info("Hyp mode pre-initialized successfully\n");
+	return;
+out_free_mappings:
+	free_hyp_pgds();
+	//TODO: free stack
+out_err:
+	preinit_status = err;
+	return;
+}
+
+/**
+ * Inits Hyp-mode on all online CPUs
+ */
+static int init_hyp_mode(void)
+{
+	int cpu;
+	int err = 0;
+
+	/*
 	 * It is probably enough to obtain the default on one
 	 * CPU. It's unlikely to be different on the others.
 	 */
-	hyp_default_vectors = __hyp_get_vectors();
+	hyp_default_vectors = 0xdeadbeefdeadbeef; //__hyp_get_vectors();
 
-	/*
-	 * Allocate stack pages for Hypervisor-mode
-	 */
+	if (preinit_status != 0) {
+		kvm_err("Hyp mode preinit failed, see above");
+		err = preinit_status;
+		goto out_err;
+	}
+
+#if 0
 	for_each_possible_cpu(cpu) {
 		unsigned long stack_page;
 
@@ -906,15 +963,6 @@ static int init_hyp_mode(void)
 		}
 
 		per_cpu(kvm_arm_hyp_stack_page, cpu) = stack_page;
-	}
-
-	/*
-	 * Map the Hyp-code called directly from the host
-	 */
-	err = create_hyp_mappings(__kvm_hyp_code_start, __kvm_hyp_code_end);
-	if (err) {
-		kvm_err("Cannot map world-switch code\n");
-		goto out_free_mappings;
 	}
 
 	/*
@@ -929,6 +977,7 @@ static int init_hyp_mode(void)
 			goto out_free_mappings;
 		}
 	}
+#endif
 
 	/*
 	 * Map the host CPU structures
@@ -955,7 +1004,7 @@ static int init_hyp_mode(void)
 	/*
 	 * Execute the init code on each CPU.
 	 */
-	on_each_cpu(cpu_init_hyp_mode, NULL, 1);
+	//on_each_cpu(cpu_init_hyp_mode, NULL, 1);
 
 	/*
 	 * Init HYP view of VGIC
@@ -988,9 +1037,9 @@ out_free_context:
 	free_percpu(kvm_host_cpu_state);
 out_free_mappings:
 	free_hyp_pgds();
-out_free_stack_pages:
-	for_each_possible_cpu(cpu)
-		free_page(per_cpu(kvm_arm_hyp_stack_page, cpu));
+out_free_stack_base:
+	//for_each_possible_cpu(cpu)
+	//	free_page(per_cpu(kvm_arm_hyp_stack_page, cpu));
 out_err:
 	kvm_err("error initializing Hyp mode: %d\n", err);
 	return err;

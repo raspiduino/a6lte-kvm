@@ -27,6 +27,7 @@
 	.align	11
 
 ENTRY(__kvm_hyp_init)
+#if 0
 	ventry	__invalid		// Synchronous EL2t
 	ventry	__invalid		// IRQ EL2t
 	ventry	__invalid		// FIQ EL2t
@@ -49,6 +50,14 @@ ENTRY(__kvm_hyp_init)
 
 __invalid:
 	b	.
+
+#endif
+
+exynos_entry:
+ldr x3, [x0, #24]
+ldr x2, [x0, #16]
+ldr x1, [x0, #8]
+ldr x0, [x0]
 
 	/*
 	 * x0: HYP boot pgd
@@ -111,8 +120,16 @@ target: /* We're now in the trampoline code, switch page tables */
 	kern_hyp_va	x3
 	msr	vbar_el2, x3
 
+	mov x0, #0
+	msr vttbr_el2, x0
+
 	/* Hello, World! */
-	eret
+	//eret
+
+	ldr x0, =0xc2000401
+	mov x1, 0
+	smc #0
+
 ENDPROC(__kvm_hyp_init)
 
 	.ltorg
