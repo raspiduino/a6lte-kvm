@@ -33,6 +33,7 @@ Originally from @sleirsgoevy 's patch for SM-A600FN [here](https://github.com/sl
 
 ## Download
 In case you don't want to build it yourself, I have built one for you in [release](https://github.com/raspiduino/a6lte-kvm/releases)
+<br>Trust me, there are absolutely no virus here :). Why should one insert a virus into an opensource project?
 
 ## Known bugs
 - You cannot set any type of lock screen. This is Magisk bug. You can try some solutions [here](https://github.com/topjohnwu/Magisk/issues/1794). I cannot confirm (yet) if any of solutions in the link work.
