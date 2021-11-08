@@ -32,6 +32,8 @@
 #include <asm/irq_regs.h>
 #include <asm/pmu.h>
 
+#include <linux/perf_event_cpu.h>
+
 /* Set at runtime when we know what CPU type we are. */
 static struct arm_pmu *cpu_pmu;
 

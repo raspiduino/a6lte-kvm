@@ -33,6 +33,8 @@
 
 #include <asm/kvm_host.h>
 
+void kvm_vcpu_pmu_restore_guest(struct kvm_vcpu *vcpu);
+
 #ifndef KVM_MMIO_SIZE
 #define KVM_MMIO_SIZE 8
 #endif
@@ -1106,6 +1108,7 @@ static inline void kvm_vcpu_set_in_spin_loop(struct kvm_vcpu *vcpu, bool val)
 static inline void kvm_vcpu_set_dy_eligible(struct kvm_vcpu *vcpu, bool val)
 {
 }
+
 #endif /* CONFIG_HAVE_KVM_CPU_RELAX_INTERCEPT */
 #endif
 

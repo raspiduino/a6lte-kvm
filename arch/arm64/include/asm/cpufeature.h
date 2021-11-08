@@ -31,6 +31,8 @@
 #define ARM64_ALT_PAN_NOT_UAO			6
 #define ARM64_UNMAP_KERNEL_AT_EL0		23
 
+#define ARM64_HAS_32BIT_EL0			13
+
 #define ARM64_NCAPS				24
 
 #ifndef __ASSEMBLY__
@@ -188,6 +190,11 @@ static inline bool system_uses_ttbr0_pan(void)
 {
 	return IS_ENABLED(CONFIG_ARM64_SW_TTBR0_PAN) &&
 		!cpus_have_cap(ARM64_HAS_PAN);
+}
+
+static inline bool system_supports_32bit_el0(void)
+{
+	return cpus_have_cap(ARM64_HAS_32BIT_EL0);
 }
 
 #endif /* __ASSEMBLY__ */

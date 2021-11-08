@@ -32,6 +32,7 @@ struct sys_reg_params {
 	bool	is_write;
 	bool	is_aarch32;
 	bool	is_32bit;	/* Only valid if is_aarch32 is true */
+	u64	regval; // Upstream
 };
 
 struct sys_reg_desc {
@@ -75,6 +76,16 @@ static inline bool read_zero(struct kvm_vcpu *vcpu,
 {
 	*vcpu_reg(vcpu, p->Rt) = 0;
 	return true;
+}
+
+__attribute__((unused)) static bool read_from_write_only_upstream(struct kvm_vcpu *vcpu,
+				 		const struct sys_reg_params *params,
+				 		const struct sys_reg_desc *r)
+{
+	WARN_ONCE(1, "Unexpected sys_reg read to write-only register\n");
+	print_sys_reg_instr(params);
+	kvm_inject_undefined(vcpu);
+	return false;
 }
 
 static inline bool write_to_read_only(struct kvm_vcpu *vcpu,
