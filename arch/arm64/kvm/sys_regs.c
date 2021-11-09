@@ -855,7 +855,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
 	  access_pmu_evcntr },
 	/* PMUSERENR_EL0 */
 	{ Op0(0b11), Op1(0b011), CRn(0b1001), CRm(0b1110), Op2(0b000),
-	  access_pmuserenr, reset_val},
+	  access_pmuserenr },
 	/* PMOVSSET_EL0 */
 	{ Op0(0b11), Op1(0b011), CRn(0b1001), CRm(0b1110), Op2(0b011),
 	  access_pmovs },
@@ -869,7 +869,7 @@ static const struct sys_reg_desc sys_reg_descs[] = {
 
 	/* PMCCFILTR_EL0 */
 	{ Op0(0b11), Op1(0b011), CRn(0b1110), CRm(0b1111), Op2(0b111),
-	  access_pmu_evtyper, reset_val },
+	  access_pmu_evtyper },
 
 	/* DACR32_EL2 */
 	{ Op0(0b11), Op1(0b100), CRn(0b0011), CRm(0b0000), Op2(0b000),
