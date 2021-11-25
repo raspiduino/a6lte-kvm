@@ -28,6 +28,73 @@
 #include <asm/kvm_asm.h>
 #include <asm/kvm_mmio.h>
 
+#define KVM_REQUEST_ARCH_BASE     8
+
+#define KVM_ARCH_REQ_FLAGS(nr, flags) ({ \
+	BUILD_BUG_ON((unsigned)(nr) >= 32 - KVM_REQUEST_ARCH_BASE); \
+	(unsigned)(((nr) + KVM_REQUEST_ARCH_BASE) | (flags)); \
+})
+
+#define KVM_ARCH_REQ(nr)           KVM_ARCH_REQ_FLAGS(nr, 0)
+#define KVM_REQ_IRQ_PENDING	KVM_ARCH_REQ(1)
+
+/*
+ * 0 is reserved as an invalid value.
+ * Order should be kept in sync with the save/restore code.
+ */
+enum vcpu_sysreg {
+	__INVALID_SYSREG__,
+	MPIDR_EL1,	/* MultiProcessor Affinity Register */
+	CSSELR_EL1,	/* Cache Size Selection Register */
+	SCTLR_EL1,	/* System Control Register */
+	ACTLR_EL1,	/* Auxiliary Control Register */
+	CPACR_EL1,	/* Coprocessor Access Control */
+	TTBR0_EL1,	/* Translation Table Base Register 0 */
+	TTBR1_EL1,	/* Translation Table Base Register 1 */
+	TCR_EL1,	/* Translation Control Register */
+	ESR_EL1,	/* Exception Syndrome Register */
+	AFSR0_EL1,	/* Auxiliary Fault Status Register 0 */
+	AFSR1_EL1,	/* Auxiliary Fault Status Register 1 */
+	FAR_EL1,	/* Fault Address Register */
+	MAIR_EL1,	/* Memory Attribute Indirection Register */
+	VBAR_EL1,	/* Vector Base Address Register */
+	CONTEXTIDR_EL1,	/* Context ID Register */
+	TPIDR_EL0,	/* Thread ID, User R/W */
+	TPIDRRO_EL0,	/* Thread ID, User R/O */
+	TPIDR_EL1,	/* Thread ID, Privileged */
+	AMAIR_EL1,	/* Aux Memory Attribute Indirection Register */
+	CNTKCTL_EL1,	/* Timer Control Register (EL1) */
+	PAR_EL1,	/* Physical Address Register */
+	MDSCR_EL1,	/* Monitor Debug System Control Register */
+	MDCCINT_EL1,	/* Monitor Debug Comms Channel Interrupt Enable Reg */
+
+	/* Performance Monitors Registers */
+	PMCR_EL0,	/* Control Register */
+	PMSELR_EL0,	/* Event Counter Selection Register */
+	PMEVCNTR0_EL0,	/* Event Counter Register (0-30) */
+	PMEVCNTR30_EL0 = PMEVCNTR0_EL0 + 30,
+	PMCCNTR_EL0,	/* Cycle Counter Register */
+	PMEVTYPER0_EL0,	/* Event Type Register (0-30) */
+	PMEVTYPER30_EL0 = PMEVTYPER0_EL0 + 30,
+	PMCCFILTR_EL0,	/* Cycle Count Filter Register */
+	PMCNTENSET_EL0,	/* Count Enable Set Register */
+	PMINTENSET_EL1,	/* Interrupt Enable Set Register */
+	PMOVSSET_EL0,	/* Overflow Flag Status Set Register */
+	PMSWINC_EL0,	/* Software Increment Register */
+	PMUSERENR_EL0,	/* User Enable Register */
+
+	/* 32bit specific registers. Keep them at the end of the range */
+	DACR32_EL2,	/* Domain Access Control Register */
+	IFSR32_EL2,	/* Instruction Fault Status Register */
+	FPEXC32_EL2,	/* Floating-Point Exception Control Register */
+	DBGVCR32_EL2,	/* Debug Vector Catch Register */
+
+	NR_SYS_REGS	/* Nothing after this line! */
+};
+
+#define c2_TTBCR2	(c2_TTBCR + 1)	/* Translation Table Base Control R. 2 */
+#define cp14_DBGVCR	(DBGVCR32_EL2 * 2)
+
 #if defined(CONFIG_KVM_ARM_MAX_VCPUS)
 #define KVM_MAX_VCPUS CONFIG_KVM_ARM_MAX_VCPUS
 #else
@@ -40,6 +107,7 @@
 
 #include <kvm/arm_vgic.h>
 #include <kvm/arm_arch_timer.h>
+#include <kvm/arm_pmu.h>
 
 #define KVM_VCPU_MAX_FEATURES 3
 
@@ -108,9 +176,12 @@ struct kvm_vcpu_arch {
 	/* Pointer to host CPU context */
 	kvm_cpu_context_t *host_cpu_context;
 
+    struct kvm_guest_debug_arch vcpu_debug_state;
+
 	/* VGIC state */
 	struct vgic_cpu vgic_cpu;
 	struct arch_timer_cpu timer_cpu;
+    struct kvm_pmu pmu;
 
 	/*
 	 * Anything that is not used directly from assembly code goes

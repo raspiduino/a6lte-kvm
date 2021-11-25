@@ -32,7 +32,7 @@ static struct timecounter *timecounter;
 static struct workqueue_struct *wqueue;
 static unsigned int host_vtimer_irq;
 
-static cycle_t kvm_phys_timer_read(void)
+cycle_t kvm_phys_timer_read(void)
 {
 	return timecounter->cc->read(timecounter->cc);
 }

@@ -189,7 +189,7 @@
 	// x2: base address for cpu context
 	// x3: tmp register
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(MPIDR_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(1)
 
 	mrs	x4,	vmpidr_el2
 	mrs	x5,	csselr_el1
@@ -238,7 +238,7 @@
 	sub	w24, w26, w24		// How many BPs to skip
 	sub	w25, w26, w25		// How many WPs to skip
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(DBGBCR0_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(23)
 
 	adr	x26, 1f
 	add	x26, x26, x24, lsl #2
@@ -283,7 +283,7 @@
 	str	x6, [x3, #(1 * 8)]
 	str	x5, [x3, #(0 * 8)]
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(DBGBVR0_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(39)
 
 	adr	x26, 1f
 	add	x26, x26, x24, lsl #2
@@ -328,7 +328,7 @@
 	str	x6, [x3, #(1 * 8)]
 	str	x5, [x3, #(0 * 8)]
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(DBGWCR0_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(55)
 
 	adr	x26, 1f
 	add	x26, x26, x25, lsl #2
@@ -373,7 +373,7 @@
 	str	x6, [x3, #(1 * 8)]
 	str	x5, [x3, #(0 * 8)]
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(DBGWVR0_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(71)
 
 	adr	x26, 1f
 	add	x26, x26, x25, lsl #2
@@ -419,14 +419,14 @@
 	str	x5, [x3, #(0 * 8)]
 
 	mrs	x21, mdccint_el1
-	str	x21, [x2, #CPU_SYSREG_OFFSET(MDCCINT_EL1)]
+	str	x21, [x2, #CPU_SYSREG_OFFSET(87)]
 .endm
 
 .macro restore_sysregs
 	// x2: base address for cpu context
 	// x3: tmp register
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(MPIDR_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(1)
 
 	ldp	x4, x5, [x3]
 	ldp	x6, x7, [x3, #16]
@@ -475,7 +475,7 @@
 	sub	w24, w26, w24		// How many BPs to skip
 	sub	w25, w26, w25		// How many WPs to skip
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(DBGBCR0_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(23)
 
 	adr	x26, 1f
 	add	x26, x26, x24, lsl #2
@@ -519,7 +519,7 @@
 	msr	dbgbcr1_el1, x6
 	msr	dbgbcr0_el1, x5
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(DBGBVR0_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(39)
 
 	adr	x26, 1f
 	add	x26, x26, x24, lsl #2
@@ -563,7 +563,7 @@
 	msr	dbgbvr1_el1, x6
 	msr	dbgbvr0_el1, x5
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(DBGWCR0_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(55)
 
 	adr	x26, 1f
 	add	x26, x26, x25, lsl #2
@@ -607,7 +607,7 @@
 	msr	dbgwcr1_el1, x6
 	msr	dbgwcr0_el1, x5
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(DBGWVR0_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(71)
 
 	adr	x26, 1f
 	add	x26, x26, x25, lsl #2
@@ -651,7 +651,7 @@
 	msr	dbgwvr1_el1, x6
 	msr	dbgwvr0_el1, x5
 
-	ldr	x21, [x2, #CPU_SYSREG_OFFSET(MDCCINT_EL1)]
+	ldr	x21, [x2, #CPU_SYSREG_OFFSET(87)]
 	msr	mdccint_el1, x21
 .endm
 
@@ -678,7 +678,7 @@
 	add	x25, x0, #VCPU_CONTEXT
 
 	// Check the state of MDSCR_EL1
-	ldr	x25, [x25, #CPU_SYSREG_OFFSET(MDSCR_EL1)]
+	ldr	x25, [x25, #CPU_SYSREG_OFFSET(22)]
 	and	x26, x25, #DBG_MDSCR_KDE
 	and	x25, x25, #DBG_MDSCR_MDE
 	adds	xzr, x25, x26
@@ -707,7 +707,7 @@
 	stp	x4, x5, [x3]
 	stp	x6, x7, [x3, #16]
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(DACR32_EL2)
+	add	x3, x2, #CPU_SYSREG_OFFSET(88)
 	mrs	x4, dacr32_el2
 	mrs	x5, ifsr32_el2
 	mrs	x6, fpexc32_el2
@@ -720,7 +720,7 @@
 2:
 	skip_tee_state x8, 1f
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(TEECR32_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(92)
 	mrs	x4, teecr32_el1
 	mrs	x5, teehbr32_el1
 	stp	x4, x5, [x3]
@@ -738,7 +738,7 @@
 	msr	spsr_irq, x6
 	msr	spsr_fiq, x7
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(DACR32_EL2)
+	add	x3, x2, #CPU_SYSREG_OFFSET(88)
 	ldp	x4, x5, [x3]
 	ldr	x6, [x3, #16]
 	msr	dacr32_el2, x4
@@ -751,7 +751,7 @@
 2:
 	skip_tee_state x8, 1f
 
-	add	x3, x2, #CPU_SYSREG_OFFSET(TEECR32_EL1)
+	add	x3, x2, #CPU_SYSREG_OFFSET(92)
 	ldp	x4, x5, [x3]
 	msr	teecr32_el1, x4
 	msr	teehbr32_el1, x5

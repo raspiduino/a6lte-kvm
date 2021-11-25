@@ -28,6 +28,8 @@
 #include <asm/kvm_mmio.h>
 #include <asm/ptrace.h>
 
+#include <asm/esr.h>
+
 unsigned long *vcpu_reg32(const struct kvm_vcpu *vcpu, u8 reg_num);
 unsigned long *vcpu_spsr32(const struct kvm_vcpu *vcpu);
 
@@ -280,6 +282,12 @@ static inline unsigned long vcpu_data_host_to_guest(struct kvm_vcpu *vcpu,
 	}
 
 	return data;		/* Leave LE untouched */
+}
+
+static inline int kvm_vcpu_sys_get_rt(struct kvm_vcpu *vcpu)
+{
+	u32 esr = kvm_vcpu_get_hsr(vcpu);
+	return (esr & ESR_ELx_SYS64_ISS_RT_MASK) >> ESR_ELx_SYS64_ISS_RT_SHIFT;
 }
 
 #endif /* __ARM64_KVM_EMULATE_H__ */

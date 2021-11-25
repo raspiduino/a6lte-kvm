@@ -154,6 +154,8 @@ struct vgic_dist {
 	/* Distributor enabled */
 	u32			enabled;
 
+    struct vgic_irq		*spis;
+
 	/* Interrupt enabled (one bit per IRQ) */
 	struct vgic_bitmap	irq_enabled;
 
@@ -213,6 +215,11 @@ struct vgic_dist {
 
 	/* Bitmap indicating which CPU has something pending */
 	unsigned long		*irq_pending_on_cpu;
+    
+    /* Protects the lpi_list and the count value below. */
+    spinlock_t		lpi_list_lock;
+    struct list_head	lpi_list_head;
+    int			lpi_list_count;
 #endif
 };
 
@@ -235,14 +242,70 @@ struct vgic_v3_cpu_if {
 	u32		vgic_elrsr;	/* Saved only */
 	u32		vgic_ap0r[4];
 	u32		vgic_ap1r[4];
+    u32		vgic_sre;	/* Restored only, change ignored */
 	u64		vgic_lr[VGIC_V3_MAX_LRS];
 #endif
+};
+
+enum vgic_irq_config {
+	VGIC_CONFIG_EDGE = 0,
+	VGIC_CONFIG_LEVEL
+};
+
+struct vgic_irq {
+	spinlock_t irq_lock;		/* Protects the content of the struct */
+	struct list_head lpi_list;	/* Used to link all LPIs together */
+	struct list_head ap_list;
+
+	struct kvm_vcpu *vcpu;		/* SGIs and PPIs: The VCPU
+					 * SPIs and LPIs: The VCPU whose ap_list
+					 * this is queued on.
+					 */
+
+	struct kvm_vcpu *target_vcpu;	/* The VCPU that this interrupt should
+					 * be sent to, as a result of the
+					 * targets reg (v2) or the
+					 * affinity reg (v3).
+					 */
+
+	u32 intid;			/* Guest visible INTID */
+	bool line_level;		/* Level only */
+	bool pending_latch;		/* The pending latch state used to calculate
+					 * the pending state for both level
+					 * and edge triggered IRQs. */
+	bool active;			/* not used for LPIs */
+	bool enabled;
+	bool hw;			/* Tied to HW IRQ */
+	struct kref refcount;		/* Used for LPIs */
+	u32 hwintid;			/* HW INTID number */
+	union {
+		u8 targets;			/* GICv2 target VCPUs mask */
+		u32 mpidr;			/* GICv3 target VCPU */
+	};
+	u8 source;			/* GICv2 SGIs only */
+	u8 priority;
+	enum vgic_irq_config config;	/* Level or edge */
+
+	void *owner;			/* Opaque pointer to reserve an interrupt
+					   for in-kernel devices. */
 };
 
 struct vgic_cpu {
 #ifdef CONFIG_KVM_ARM_VGIC
 	/* per IRQ to LR mapping */
 	u8		*vgic_irq_lr_map;
+
+    struct vgic_irq private_irqs[VGIC_NR_PRIVATE_IRQS];
+
+    spinlock_t ap_list_lock;	/* Protects the ap_list */
+
+	/*
+	 * List of IRQs that this VCPU should consider because they are either
+	 * Active or Pending (hence the name; AP list), or because they recently
+	 * were one of the two and need to be migrated off this list to another
+	 * VCPU.
+	 */
+	struct list_head ap_list_head;
 
 	/* Pending interrupts on this VCPU */
 	DECLARE_BITMAP(	pending_percpu, VGIC_NR_PRIVATE_IRQS);

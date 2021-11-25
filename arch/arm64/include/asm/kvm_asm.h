@@ -20,51 +20,6 @@
 
 #include <asm/virt.h>
 
-/*
- * 0 is reserved as an invalid value.
- * Order *must* be kept in sync with the hyp switch code.
- */
-#define	MPIDR_EL1	1	/* MultiProcessor Affinity Register */
-#define	CSSELR_EL1	2	/* Cache Size Selection Register */
-#define	SCTLR_EL1	3	/* System Control Register */
-#define	ACTLR_EL1	4	/* Auxilliary Control Register */
-#define	CPACR_EL1	5	/* Coprocessor Access Control */
-#define	TTBR0_EL1	6	/* Translation Table Base Register 0 */
-#define	TTBR1_EL1	7	/* Translation Table Base Register 1 */
-#define	TCR_EL1		8	/* Translation Control Register */
-#define	ESR_EL1		9	/* Exception Syndrome Register */
-#define	AFSR0_EL1	10	/* Auxilary Fault Status Register 0 */
-#define	AFSR1_EL1	11	/* Auxilary Fault Status Register 1 */
-#define	FAR_EL1		12	/* Fault Address Register */
-#define	MAIR_EL1	13	/* Memory Attribute Indirection Register */
-#define	VBAR_EL1	14	/* Vector Base Address Register */
-#define	CONTEXTIDR_EL1	15	/* Context ID Register */
-#define	TPIDR_EL0	16	/* Thread ID, User R/W */
-#define	TPIDRRO_EL0	17	/* Thread ID, User R/O */
-#define	TPIDR_EL1	18	/* Thread ID, Privileged */
-#define	AMAIR_EL1	19	/* Aux Memory Attribute Indirection Register */
-#define	CNTKCTL_EL1	20	/* Timer Control Register (EL1) */
-#define	PAR_EL1		21	/* Physical Address Register */
-#define MDSCR_EL1	22	/* Monitor Debug System Control Register */
-#define DBGBCR0_EL1	23	/* Debug Breakpoint Control Registers (0-15) */
-#define DBGBCR15_EL1	38
-#define DBGBVR0_EL1	39	/* Debug Breakpoint Value Registers (0-15) */
-#define DBGBVR15_EL1	54
-#define DBGWCR0_EL1	55	/* Debug Watchpoint Control Registers (0-15) */
-#define DBGWCR15_EL1	70
-#define DBGWVR0_EL1	71	/* Debug Watchpoint Value Registers (0-15) */
-#define DBGWVR15_EL1	86
-#define MDCCINT_EL1	87	/* Monitor Debug Comms Channel Interrupt Enable Reg */
-
-/* 32bit specific registers. Keep them at the end of the range */
-#define	DACR32_EL2	88	/* Domain Access Control Register */
-#define	IFSR32_EL2	89	/* Instruction Fault Status Register */
-#define	FPEXC32_EL2	90	/* Floating-Point Exception Control Register */
-#define	DBGVCR32_EL2	91	/* Debug Vector Catch Register */
-#define	TEECR32_EL1	92	/* ThumbEE Configuration Register */
-#define	TEEHBR32_EL1	93	/* ThumbEE Handler Base Register */
-#define	NR_SYS_REGS	94
-
 /* 32bit mapping */
 #define c0_MPIDR	(MPIDR_EL1 * 2)	/* MultiProcessor ID Register */
 #define c0_CSSELR	(CSSELR_EL1 * 2)/* Cache Size Selection Register */

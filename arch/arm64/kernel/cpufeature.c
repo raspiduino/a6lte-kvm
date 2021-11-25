@@ -976,3 +976,12 @@ cpufeature_pan_not_uao(const struct arm64_cpu_capabilities *entry)
 {
 	return (cpus_have_cap(ARM64_HAS_PAN) && !cpus_have_cap(ARM64_HAS_UAO));
 }
+
+u64 read_sanitised_ftr_reg(u32 id)
+{
+	struct arm64_ftr_reg *regp = get_arm64_ftr_reg(id);
+
+	/* We shouldn't get a request for an unsupported register */
+	BUG_ON(!regp);
+	return regp->sys_val;
+}

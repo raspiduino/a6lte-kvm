@@ -23,6 +23,10 @@
 #include <linux/hrtimer.h>
 #include <linux/workqueue.h>
 
+#define vcpu_ptimer(v)	(&(v)->arch.timer_cpu.ptimer)
+
+cycle_t kvm_phys_timer_read(void);
+
 struct arch_timer_kvm {
 #ifdef CONFIG_KVM_ARM_TIMER
 	/* Is the timer enabled */
@@ -31,6 +35,21 @@ struct arch_timer_kvm {
 	/* Virtual offset */
 	cycle_t			cntvoff;
 #endif
+};
+
+struct arch_timer_context {
+	/* Registers: control register, timer value */
+	u32				cnt_ctl;
+	u64				cnt_cval;
+
+	/* Timer IRQ */
+	struct kvm_irq_level		irq;
+
+	/* Active IRQ state caching */
+	bool				active_cleared_last;
+
+	/* Virtual offset */
+	u64			cntvoff;
 };
 
 struct arch_timer_cpu {
@@ -43,6 +62,9 @@ struct arch_timer_cpu {
 	 * Anything that is not used directly from assembly code goes
 	 * here.
 	 */
+
+    struct arch_timer_context	vtimer;
+	struct arch_timer_context	ptimer;
 
 	/* Background timer used when the guest is not running */
 	struct hrtimer			timer;
