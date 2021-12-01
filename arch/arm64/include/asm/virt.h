@@ -55,6 +55,11 @@ static inline bool is_hyp_mode_mismatched(void)
 extern char __hyp_text_start[];
 extern char __hyp_text_end[];
 
+static inline bool has_vhe(void)
+{
+    return false; // No we don't have HVE in our Cortex-A53!
+}
+
 #endif /* __ASSEMBLY__ */
 
 #endif /* ! __ASM__VIRT_H */

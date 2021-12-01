@@ -47,6 +47,117 @@ int __attribute_const__ kvm_target_cpu(void);
 int kvm_reset_vcpu(struct kvm_vcpu *vcpu);
 int kvm_arch_dev_ioctl_check_extension(long ext);
 
+/*
+ * 0 is reserved as an invalid value.
+ * Order should be kept in sync with the save/restore code.
+ */
+enum vcpu_sysreg {
+	__INVALID_SYSREG__,
+	MPIDR_EL1,	/* MultiProcessor Affinity Register */
+	CSSELR_EL1,	/* Cache Size Selection Register */
+	SCTLR_EL1,	/* System Control Register */
+	ACTLR_EL1,	/* Auxiliary Control Register */
+	CPACR_EL1,	/* Coprocessor Access Control */
+	ZCR_EL1,	/* SVE Control */
+	TTBR0_EL1,	/* Translation Table Base Register 0 */
+	TTBR1_EL1,	/* Translation Table Base Register 1 */
+	TCR_EL1,	/* Translation Control Register */
+	ESR_EL1,	/* Exception Syndrome Register */
+	AFSR0_EL1,	/* Auxiliary Fault Status Register 0 */
+	AFSR1_EL1,	/* Auxiliary Fault Status Register 1 */
+	FAR_EL1,	/* Fault Address Register */
+	MAIR_EL1,	/* Memory Attribute Indirection Register */
+	VBAR_EL1,	/* Vector Base Address Register */
+	CONTEXTIDR_EL1,	/* Context ID Register */
+	TPIDR_EL0,	/* Thread ID, User R/W */
+	TPIDRRO_EL0,	/* Thread ID, User R/O */
+	TPIDR_EL1,	/* Thread ID, Privileged */
+	AMAIR_EL1,	/* Aux Memory Attribute Indirection Register */
+	CNTKCTL_EL1,	/* Timer Control Register (EL1) */
+	PAR_EL1,	/* Physical Address Register */
+	MDSCR_EL1,	/* Monitor Debug System Control Register */
+	MDCCINT_EL1,	/* Monitor Debug Comms Channel Interrupt Enable Reg */
+	DISR_EL1,	/* Deferred Interrupt Status Register */
+
+	/* Performance Monitors Registers */
+	PMCR_EL0,	/* Control Register */
+	PMSELR_EL0,	/* Event Counter Selection Register */
+	PMEVCNTR0_EL0,	/* Event Counter Register (0-30) */
+	PMEVCNTR30_EL0 = PMEVCNTR0_EL0 + 30,
+	PMCCNTR_EL0,	/* Cycle Counter Register */
+	PMEVTYPER0_EL0,	/* Event Type Register (0-30) */
+	PMEVTYPER30_EL0 = PMEVTYPER0_EL0 + 30,
+	PMCCFILTR_EL0,	/* Cycle Count Filter Register */
+	PMCNTENSET_EL0,	/* Count Enable Set Register */
+	PMINTENSET_EL1,	/* Interrupt Enable Set Register */
+	PMOVSSET_EL0,	/* Overflow Flag Status Set Register */
+	PMSWINC_EL0,	/* Software Increment Register */
+	PMUSERENR_EL0,	/* User Enable Register */
+
+	/* Pointer Authentication Registers in a strict increasing order. */
+	APIAKEYLO_EL1,
+	APIAKEYHI_EL1,
+	APIBKEYLO_EL1,
+	APIBKEYHI_EL1,
+	APDAKEYLO_EL1,
+	APDAKEYHI_EL1,
+	APDBKEYLO_EL1,
+	APDBKEYHI_EL1,
+	APGAKEYLO_EL1,
+	APGAKEYHI_EL1,
+
+	/* 32bit specific registers. Keep them at the end of the range */
+	DACR32_EL2,	/* Domain Access Control Register */
+	IFSR32_EL2,	/* Instruction Fault Status Register */
+	FPEXC32_EL2,	/* Floating-Point Exception Control Register */
+	DBGVCR32_EL2,	/* Debug Vector Catch Register */
+
+	NR_SYS_REGS	/* Nothing after this line! */
+};
+
+/* 32bit mapping */
+#define c0_MPIDR	(MPIDR_EL1 * 2)	/* MultiProcessor ID Register */
+#define c0_CSSELR	(CSSELR_EL1 * 2)/* Cache Size Selection Register */
+#define c1_SCTLR	(SCTLR_EL1 * 2)	/* System Control Register */
+#define c1_ACTLR	(ACTLR_EL1 * 2)	/* Auxiliary Control Register */
+#define c1_CPACR	(CPACR_EL1 * 2)	/* Coprocessor Access Control */
+#define c2_TTBR0	(TTBR0_EL1 * 2)	/* Translation Table Base Register 0 */
+#define c2_TTBR0_high	(c2_TTBR0 + 1)	/* TTBR0 top 32 bits */
+#define c2_TTBR1	(TTBR1_EL1 * 2)	/* Translation Table Base Register 1 */
+#define c2_TTBR1_high	(c2_TTBR1 + 1)	/* TTBR1 top 32 bits */
+#define c2_TTBCR	(TCR_EL1 * 2)	/* Translation Table Base Control R. */
+#define c2_TTBCR2	(c2_TTBCR + 1)	/* Translation Table Base Control R. 2 */
+#define c3_DACR		(DACR32_EL2 * 2)/* Domain Access Control Register */
+#define c5_DFSR		(ESR_EL1 * 2)	/* Data Fault Status Register */
+#define c5_IFSR		(IFSR32_EL2 * 2)/* Instruction Fault Status Register */
+#define c5_ADFSR	(AFSR0_EL1 * 2)	/* Auxiliary Data Fault Status R */
+#define c5_AIFSR	(AFSR1_EL1 * 2)	/* Auxiliary Instr Fault Status R */
+#define c6_DFAR		(FAR_EL1 * 2)	/* Data Fault Address Register */
+#define c6_IFAR		(c6_DFAR + 1)	/* Instruction Fault Address Register */
+#define c7_PAR		(PAR_EL1 * 2)	/* Physical Address Register */
+#define c7_PAR_high	(c7_PAR + 1)	/* PAR top 32 bits */
+#define c10_PRRR	(MAIR_EL1 * 2)	/* Primary Region Remap Register */
+#define c10_NMRR	(c10_PRRR + 1)	/* Normal Memory Remap Register */
+#define c12_VBAR	(VBAR_EL1 * 2)	/* Vector Base Address Register */
+#define c13_CID		(CONTEXTIDR_EL1 * 2)	/* Context ID Register */
+#define c13_TID_URW	(TPIDR_EL0 * 2)	/* Thread ID, User R/W */
+#define c13_TID_URO	(TPIDRRO_EL0 * 2)/* Thread ID, User R/O */
+#define c13_TID_PRIV	(TPIDR_EL1 * 2)	/* Thread ID, Privileged */
+#define c10_AMAIR0	(AMAIR_EL1 * 2)	/* Aux Memory Attr Indirection Reg */
+#define c10_AMAIR1	(c10_AMAIR0 + 1)/* Aux Memory Attr Indirection Reg */
+#define c14_CNTKCTL	(CNTKCTL_EL1 * 2) /* Timer Control Register (PL1) */
+
+#define cp14_DBGDSCRext	(MDSCR_EL1 * 2)
+#define cp14_DBGBCR0	(DBGBCR0_EL1 * 2)
+#define cp14_DBGBVR0	(DBGBVR0_EL1 * 2)
+#define cp14_DBGBXVR0	(cp14_DBGBVR0 + 1)
+#define cp14_DBGWCR0	(DBGWCR0_EL1 * 2)
+#define cp14_DBGWVR0	(DBGWVR0_EL1 * 2)
+#define cp14_DBGDCCINT	(MDCCINT_EL1 * 2)
+#define cp14_DBGVCR	(DBGVCR32_EL2 * 2)
+
+#define NR_COPRO_REGS	(NR_SYS_REGS * 2)
+
 struct kvm_arch {
 	/* The VMID generation used for the virt. memory system */
 	u64    vmid_gen;
@@ -55,6 +166,9 @@ struct kvm_arch {
 	/* 1-level 2nd stage table and lock */
 	spinlock_t pgd_lock;
 	pgd_t *pgd;
+
+    /* VTCR_EL2 value for this VM */
+	u64    vtcr;
 
 	/* VTTBR value associated with above pgd and vmid */
 	u64    vttbr;
@@ -105,6 +219,11 @@ struct kvm_vcpu_arch {
 	/* Debug state */
 	u64 debug_flags;
 
+    /* Miscellaneous vcpu state flags */
+	u64 flags;
+
+    struct kvm_guest_debug_arch vcpu_debug_state;
+
 	/* Pointer to host CPU context */
 	kvm_cpu_context_t *host_cpu_context;
 
@@ -135,6 +254,10 @@ struct kvm_vcpu_arch {
 
 	/* Detect first run of a vcpu */
 	bool has_run_once;
+
+    /* True when deferrable sysregs are loaded on the physical CPU,
+	 * see kvm_vcpu_load_sysregs and kvm_vcpu_put_sysregs. */
+	bool sysregs_loaded_on_cpu;
 };
 
 #define vcpu_gp_regs(v)		(&(v)->arch.ctxt.gp_regs)

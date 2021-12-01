@@ -23,6 +23,53 @@
 #include <linux/hrtimer.h>
 #include <linux/workqueue.h>
 
+#define vcpu_timer(v)	(&(v)->arch.timer_cpu)
+#define vcpu_vtimer(v)	(&(v)->arch.timer_cpu.timers[TIMER_VTIMER])
+#define vcpu_ptimer(v)	(&(v)->arch.timer_cpu.timers[TIMER_PTIMER])
+
+#define arch_timer_ctx_index(ctx)	((ctx) - vcpu_timer((ctx)->vcpu)->timers)
+
+enum kvm_arch_timers {
+	TIMER_PTIMER,
+	TIMER_VTIMER,
+	NR_KVM_TIMERS
+};
+
+enum kvm_arch_timer_regs {
+	TIMER_REG_CNT,
+	TIMER_REG_CVAL,
+	TIMER_REG_TVAL,
+	TIMER_REG_CTL,
+};
+
+struct arch_timer_context {
+	struct kvm_vcpu			*vcpu;
+
+	/* Registers: control register, timer value */
+	u32				cnt_ctl;
+	u64				cnt_cval;
+
+	/* Timer IRQ */
+	struct kvm_irq_level		irq;
+
+	/* Virtual offset */
+	u64				cntvoff;
+
+	/* Emulated Timer (may be unused) */
+	struct hrtimer			hrtimer;
+
+	/*
+	 * We have multiple paths which can save/restore the timer state onto
+	 * the hardware, so we need some way of keeping track of where the
+	 * latest state is.
+	 */
+	bool				loaded;
+
+	/* Duplicated state from arch_timer.c for convenience */
+	u32				host_timer_irq;
+	u32				host_timer_irq_flags;
+};
+
 struct arch_timer_kvm {
 #ifdef CONFIG_KVM_ARM_TIMER
 	/* Is the timer enabled */
@@ -35,6 +82,8 @@ struct arch_timer_kvm {
 
 struct arch_timer_cpu {
 #ifdef CONFIG_KVM_ARM_TIMER
+    struct arch_timer_context timers[NR_KVM_TIMERS];
+
 	/* Registers: control register, timer value */
 	u32				cntv_ctl;	/* Saved/restored */
 	cycle_t				cntv_cval;	/* Saved/restored */
@@ -55,7 +104,16 @@ struct arch_timer_cpu {
 
 	/* Timer IRQ */
 	const struct kvm_irq_level	*irq;
+
+    /* Is the timer enabled */
+	bool			enabled;
 #endif
+};
+
+struct timer_map {
+	struct arch_timer_context *direct_vtimer;
+	struct arch_timer_context *direct_ptimer;
+	struct arch_timer_context *emul_ptimer;
 };
 
 #ifdef CONFIG_KVM_ARM_TIMER
