@@ -20,6 +20,7 @@ Disclaimer template credit: [XDA forum](https://forum.xda-developers.com/) :)
 ## Status
 It worked!
 <br>![KVM!](https://user-images.githubusercontent.com/68118236/132131451-47ec72d8-f084-42ba-9899-9da26611b9b1.png)
+<br>I will soon update a new screenshot.
 
 ## What is this?
 This is the stock kernel source for SM-A600G, originally from [Samsung Opensource page](https://opensource.samsung.com/uploadSearch?searchValue=sm-a600g) with the file `SM-A600G_SEA_PP_Opensource.zip`, and the source has been patched for KVM support (so you can run VMs on your phone with `qemu-kvm`).
@@ -36,14 +37,14 @@ In case you don't want to build it yourself, I have built one for you in [releas
 <br>Trust me, there are absolutely no virus here :). Why should one insert a virus into an opensource project?
 
 ## Known bugs
-- You cannot set any type of lock screen. This is Magisk bug. You can try some solutions [here](https://github.com/topjohnwu/Magisk/issues/1794). I cannot confirm (yet) if any of solutions in the link work.
+- You cannot set any type of lock screen. This is Magisk bug. You can try some solutions [here](https://github.com/topjohnwu/Magisk/issues/1794). I cannot confirm (yet) if any of solutions in the link work. No lock screen means less security. You can develop your own app to replace the lock screen (I might make one some day) or you can use the lock screen feature on Game Booster on the bottom right of Linux Deploy app.
 - Power button cannot wake phone up if you put it into lockscreen mode. You can still turn on the phone using power button, capture the screen using power button + volume down but screen capture menu won't open. Temporary fix for this: install black screen app on Google Play. I don't know what's best, you have to try :) I use [this one](https://play.google.com/store/apps/details?id=in.binarybox.blackscreen), just randomly picked :)
 - If you turn your phone into lockscreen mode, power button cannot wake up your phone (see the above bug). To reset your phone, hold power button + volume down for 7 sec and it will reset. If you hold for 18 sec, it will come to "Force download mode", and you have to hold power button + volume down for 7 sec again.
 - Volume up/down won't open volume menu when you click them, but they still work.
 - The kernel only detect 4 cores / 8 cores of the Exynos 7870 SoC. I will try to fix this. In the log I can found some lines about `failed to hotplug cpu 4`. Maybe there is something I turn of by mistake when `make menuconfig`. You might not face this.
 - @sleirsgoevy confirm that Linux boot on KVM but require special patch for DTB (device tree blob), Windows not boot (yet).
 - On first boot, Chrome won't work. You have to update Chrome on Google Play, then it will work.
-- There will be some notifications about "Unauthorize action...", just ignore it. It's just Samsung stock ROM detect root. If you feel annoying, try [Security log agent fix](https://play.google.com/store/apps/details?id=disable.securitylogagent.com.securitylogagentfix)
+- There will be some notifications about "Unauthorize action...", just ignore it. It's just Samsung stock ROM detect root. If you feel annoying, try [Security log agent fix](https://play.google.com/store/apps/details?id=disable.securitylogagent.com.securitylogagentfix). Update: link is dead, use [this](https://github.com/kakopappa/SecurityLogAgentFix) instead.
 
 ## Building
 You can use the precompiled and patched img file at [release](https://github.com/raspiduino/a6lte-kvm/releases) to skip Building :)
