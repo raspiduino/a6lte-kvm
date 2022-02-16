@@ -46,6 +46,9 @@ In case you don't want to build it yourself, I have built one for you in [releas
 - On first boot, Chrome won't work. You have to update Chrome on Google Play, then it will work.
 - There will be some notifications about "Unauthorize action...", just ignore it. It's just Samsung stock ROM detect root. If you feel annoying, try [Security log agent fix](https://play.google.com/store/apps/details?id=disable.securitylogagent.com.securitylogagentfix). Update: link is dead, use [this](https://github.com/kakopappa/SecurityLogAgentFix) instead.
 
+## UPDATE
+- 16/2/2022: There is a bug in `dtc` tool, you should refer to [this comment](https://www.reddit.com/r/LineageOS/comments/hkq8ah/comment/fxk7a8u/?utm_source=share&utm_medium=web2x&context=3) to patch `dtc`. A fix will be released in this repo later!
+
 ## Building
 You can use the precompiled and patched img file at [release](https://github.com/raspiduino/a6lte-kvm/releases) to skip Building :)
 
