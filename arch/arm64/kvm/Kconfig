@@ -26,6 +26,7 @@ config KVM
 	select KVM_ARM_HOST
 	select KVM_ARM_VGIC
 	select KVM_ARM_TIMER
+    select KVM_ARM_PMU if HW_PERF_EVENTS
 	---help---
 	  Support hosting virtualized guest machines.
 
@@ -35,6 +36,13 @@ config KVM_ARM_HOST
 	bool
 	---help---
 	  Provides host support for ARM processors.
+
+config KVM_ARM_PMU
+    bool
+    ---help---
+      Adds support for a virtual Performance Monitoring Unit (PMU) in
+      virtual machines.
+
 
 config KVM_ARM_MAX_VCPUS
 	int "Number maximum supported virtual CPUs per VM"

@@ -56,14 +56,25 @@
 #define DBGWVR15_EL1	86
 #define MDCCINT_EL1	87	/* Monitor Debug Comms Channel Interrupt Enable Reg */
 
+/* Performance Monitor Registers */
+#define PMCR_EL0	88	/* Control Register */
+#define PMSELR_EL0	89	/* Event Counter Selection Register */
+#define PMEVCNTR0_EL0	90	/* Event Counter Register */
+#define PMEVCNTR30_EL0	120
+#define PMCCNTR_EL0	121	/* Cycle Counter Register */
+#define PMEVTYPER0_EL0	122	/* Event Type Register (0-30) */
+#define PMEVTYPER30_EL0	152
+#define PMCCFILTR_EL0	153	/* Cycle Count Filter Register */
+#define PMCNTENSET_EL0	154	/* Count Enable Set Register */
+
 /* 32bit specific registers. Keep them at the end of the range */
-#define	DACR32_EL2	88	/* Domain Access Control Register */
-#define	IFSR32_EL2	89	/* Instruction Fault Status Register */
-#define	FPEXC32_EL2	90	/* Floating-Point Exception Control Register */
-#define	DBGVCR32_EL2	91	/* Debug Vector Catch Register */
-#define	TEECR32_EL1	92	/* ThumbEE Configuration Register */
-#define	TEEHBR32_EL1	93	/* ThumbEE Handler Base Register */
-#define	NR_SYS_REGS	94
+#define	DACR32_EL2	155	/* Domain Access Control Register */
+#define	IFSR32_EL2	156	/* Instruction Fault Status Register */
+#define	FPEXC32_EL2	157	/* Floating-Point Exception Control Register */
+#define	DBGVCR32_EL2	158	/* Debug Vector Catch Register */
+#define	TEECR32_EL1	159	/* ThumbEE Configuration Register */
+#define	TEEHBR32_EL1	160	/* ThumbEE Handler Base Register */
+#define	NR_SYS_REGS	161
 
 /* 32bit mapping */
 #define c0_MPIDR	(MPIDR_EL1 * 2)	/* MultiProcessor ID Register */
