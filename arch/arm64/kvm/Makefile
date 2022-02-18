@@ -26,4 +26,4 @@ kvm-$(CONFIG_KVM_ARM_VGIC) += $(KVM)/arm/vgic-v3.o
 kvm-$(CONFIG_KVM_ARM_VGIC) += vgic-v3-switch.o
 kvm-$(CONFIG_KVM_ARM_TIMER) += $(KVM)/arm/arch_timer.o
 
-+kvm-$(CONFIG_KVM_ARM_PMU) += $(KVM)/arm/pmu.o
+kvm-$(CONFIG_KVM_ARM_PMU) += $(KVM)/arm/pmu.o

@@ -31,6 +31,7 @@
 #include <asm/kvm_asm.h>
 #include <asm/kvm_emulate.h>
 #include <asm/kvm_coproc.h>
+#include <kvm/arm_pmu.h>
 
 struct kvm_stats_debugfs_item debugfs_entries[] = {
 	{ NULL }
