@@ -76,7 +76,7 @@ root@localhost:~# cat /proc/kmsg | grep "sys_regs"
 <7>[ 2293.795274]  [3:qemu-system-aar: 6889] KVM sys_regs trap: Op0 = 3, Op1 = 3, CRn = 9, CRm = 13, Op2 = 0, Rt = 19, is_write = 0
 <7>[ 2294.109411]  [3:qemu-system-aar: 6889] KVM sys_regs trap: Op0 = 3, Op1 = 3, CRn = 9, CRm = 13, Op2 = 0, Rt = 8, is_write = 0
 ```
-The above log is generated inserting a simple `prink` to [this line](https://github.com/raspiduino/a6lte-kvm/blob/25292853c38cb2bd1d28fe9cf7032a760fa78a76/arch/arm64/kvm/sys_regs.c#L1309) in the code.
+The above log is generated inserting a simple `prink` to [this line](https://github.com/raspiduino/a6lte-kvm/blob/25292853c38cb2bd1d28fe9cf7032a760fa78a76/arch/arm64/kvm/sys_regs.c#L1309) in the code. Note that the log's value is in decimal (output with `%d`), not hex!
 <br> The process is being made at the [`pmu`](https://github.com/raspiduino/a6lte-kvm/tree/pmu) branch and will soon be merged back to `main` branch when it finished.
 <br> You can help us to make the work faster by sending pull requests! Thank you!
 
