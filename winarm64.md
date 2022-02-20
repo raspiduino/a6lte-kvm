@@ -109,3 +109,5 @@ Link to registers trap code:
 
 The process is being made at the [`pmu`](https://github.com/raspiduino/a6lte-kvm/tree/pmu) branch and will soon be merged back to `main` branch when it finished.
 <br> You can help us to make the work faster by sending pull requests! Thank you!
+
+Consider seeing [this mail thread](https://lists.cs.columbia.edu/pipermail/kvmarm/2015-July/015462.html)
