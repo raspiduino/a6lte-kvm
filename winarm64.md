@@ -97,7 +97,7 @@ Replace the string passed to `trap.trap()` to the line you want to convert. Then
 ---------
 Link to registers trap code:
 |Register name and trap code|Description|ARM document link|Implement status|
-|-----|-----|-----|
+|-----|-----|-----|-----|
 |[`PMCCNTR_EL0`](https://github.com/raspiduino/a6lte-kvm/blob/25292853c38cb2bd1d28fe9cf7032a760fa78a76/arch/arm64/kvm/sys_regs.c#L597)|Performance Monitors Cycle Count Register|[Link](https://developer.arm.com/documentation/ddi0595/2021-06/AArch64-Registers/PMCCNTR-EL0--Performance-Monitors-Cycle-Count-Register)|Implemented|
 |[`PMCR_EL0`](https://github.com/raspiduino/a6lte-kvm/blob/25292853c38cb2bd1d28fe9cf7032a760fa78a76/arch/arm64/kvm/sys_regs.c#L574)|Performance Monitors Control Register|[Link](https://developer.arm.com/documentation/ddi0595/2020-12/External-Registers/PMCR-EL0--Performance-Monitors-Control-Register)|Implemented|
 |[`PMCNTENCLR_EL0`](https://github.com/raspiduino/a6lte-kvm/blob/25292853c38cb2bd1d28fe9cf7032a760fa78a76/arch/arm64/kvm/sys_regs.c#L573)|Performance Monitors Count Enable Clear register|[Link](https://developer.arm.com/documentation/ddi0595/2021-06/AArch64-Registers/PMCNTENCLR-EL0--Performance-Monitors-Count-Enable-Clear-register)|Implemented|
