@@ -106,13 +106,13 @@ Wait for it to build... Have some coffee :)
 QEMU by default use 64MB flash block, so you must convert the firmware to 64MB size.
 
 - First find your built firmware :)
-It's usually located at `$WORKSPACE/Build/ArmVirtPkg/<DEBUG|RELEASE>_GCC5/FV/*.fd`
+It's usually located at `$WORKSPACE/Build/ArmVirtQemu-AARCH64/<DEBUG|RELEASE>_GCC5/FV/*.fd`
 <br> If I remembered well, then the file is `QEMU_EFI.fd`
 
 - Then, create a 64MB flash binary:
 ```bash
 dd if=/dev/zero bs=1M count=64 of=output.img
-dd if=$WORKSPACE/Build/ArmVirtPkg/<DEBUG|RELEASE>_GCC5/FV/QEMU_EFI.fd bs=1M of=output.img conv=notrunc
+dd if=$WORKSPACE/Build/ArmVirtQemu-AARCH64/<DEBUG|RELEASE>_GCC5/FV/QEMU_EFI.fd bs=1M of=output.img conv=notrunc
 ```
 
 I got this trick from some website, but I can't remember the name!
