@@ -85,7 +85,7 @@ After get the patched img file, it's now time for installing.
 
 ## Booting OSes on KVM
 This instruction will be updated later, so don't worry :)
-- Linux now boot with a custom DTB. See how to boot [here](Post in thread 'Is Samsung Galaxy A6 (Exynos 7870) suppor KVM?' https://forum.xda-developers.com/t/is-samsung-galaxy-a6-exynos-7870-suppor-kvm.4295775/post-85601873)
+- Linux now boot with a custom DTB. See how to boot [here](https://forum.xda-developers.com/t/is-samsung-galaxy-a6-exynos-7870-suppor-kvm.4295775/post-85601873)
 - U-boot with EFI support now boot
 - EDK2 (or OVMF) works with a patch.
 - 32-bit ARM (AArch32) not boot
