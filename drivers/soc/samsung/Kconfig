@@ -69,3 +69,9 @@ config SEC_INCELL
 	default n
 	help
 	  say y to enable incell data & function for Samsung.
+
+config CONFIG_EXYNOS_CPU_HOTPLUG
+	bool "Enable CPU hotplug for Samsung SoC (disable for full cores when you use KVM)"
+	default n
+	help
+	  say y to enable CPU hotplug on Samsung SoC. You might need to disable it when use with KVM (in out case a6lte-kvm), or 4/8 cores won't be detected, always fail with cannot hotplug. This has something to do with RKP, which we threw away for KVM.
