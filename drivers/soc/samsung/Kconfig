@@ -70,7 +70,7 @@ config SEC_INCELL
 	help
 	  say y to enable incell data & function for Samsung.
 
-config CONFIG_EXYNOS_CPU_HOTPLUG
+config EXYNOS_CPU_HOTPLUG
 	bool "Enable CPU hotplug for Samsung SoC (disable for full cores when you use KVM)"
 	default n
 	help
